@@ -3,9 +3,9 @@ import java.util.ArrayList;
 
 public class FiniteSet extends Set
 {
-    int first;
-    int step;
-    int limit;
+    private int first;
+    private int step;
+    private int limit;
 
     public FiniteSet(int first, int step, int limit)
     {
@@ -15,10 +15,11 @@ public class FiniteSet extends Set
     }
     public int getElement(int index)
     {
-        int rVal = first + (index - 1) * step;
+        int rVal = first + index * step;
 
         if(rVal <= limit)
             return rVal;
+
         return -1;
 
     }
@@ -37,8 +38,20 @@ public class FiniteSet extends Set
         String rString = "[ ";
         for(int i = 0; i < 3; i++)
             rString += (first + step*i) + ", ";
+
         rString += "..., " + limit + " ]";
 
         return rString;
     }
+
+    public boolean checkForExistence(int element)
+    {
+        return (element >= first && element <= limit &&(element - first)%step == 0);
+    }
+
+    public int getLimit()
+    {
+        return limit;
+    }
+
 }

@@ -1,36 +1,42 @@
 package cover;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Interactive {
 
-    public static boolean read(FiniteSet z, SetFamily r, Solution x)
+    public static boolean read(DataWrapper data)
     {
         Scanner scanner = new Scanner(System.in);
         int input;
+
         while(scanner.hasNextInt())
         {
             input = scanner.nextInt();
 
             if(input > 0)
-               makeSet(r, scanner, input);
+            {
+                System.out.println("I've read: " + input);
+                makeSet(data.getFamily(), scanner, input);
+            }
 
             else if(input < 0)
             {
-                z = new FiniteSet(1, 1, -input);
+                System.out.println("Going out by: " + input);
+                data.makeTargetSet(1, 1, -input);
                 input = scanner.nextInt();
+                System.out.println("And: " + input);
 
-                if(input == 1)
-                    x = new Precise();
-                else if(input == 2)
-                    x = new Greedy();
-                else
-                    x = new Naive();
+                data.createSolution(input);
 
                 return true;
             }
 
-            else
-                return false;
+            else if(input == 0)
+            {
+                System.out.println("Empty set detected: " + input);
+                data.getFamily().createEmptySet();
+            }
+
         }
         return false;
     }
@@ -49,34 +55,51 @@ public class Interactive {
             }
             else
                 a = scanner.nextInt();
-
+            System.out.println("ElementSet for now or 0: " + a);
             if(a == 0)
                 return;
 
             b = scanner.nextInt();
-            if(b == 0)
-            {
+            System.out.println("InfiniteSet for now or 0: " + b);
+            if(b >= 0)
                 r.addToLast(new ElementSet(a));
+
+            if(b == 0)
                 return;
+            if(b > 0)
+            {
+                input = b;
+                continue;
             }
+
 
             c = scanner.nextInt();
-            if(c == 0)
+            System.out.println("FiniteSet or 0: " + c);
+            if(c >= 0)
             {
-                r.addToLast(new InfiniteSet(a, b));
+                r.addToLast(new InfiniteSet(a, -b));
                 return;
             }
+            if(c == 0)
+                return;
+            if(c > 0)
+            {
+                input = c;
+                continue;
+            }
 
-            r.addToLast(new FiniteSet(a, b, c));
+
+            r.addToLast(new FiniteSet(a, -b, -c));
         }
     }
 
-    public static void printSets(int[] setNumerals)
+    public static void printSets(ArrayList<Integer> setNumerals)
     {
+        System.out.println("printing solution");
         String rString = new String();
 
-        for(int i = 0; i < setNumerals.length; i++)
-            rString += setNumerals[i] + " ";
+        for(Integer x: setNumerals)
+            rString += x + " ";
 
         System.out.println(rString);
     }

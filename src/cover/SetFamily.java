@@ -3,14 +3,15 @@ import java.util.ArrayList;
 
 public class SetFamily
 {
-    private class SetInFamily
+    /////////////////////////////////////////////
+    protected class SetInFamily
     {
         private ArrayList<Set> set;
         private int index;
 
         public SetInFamily(int index)
         {
-            set = new ArrayList<>();
+            set = new ArrayList<Set>();
             this.index = index;
         }
 
@@ -29,7 +30,18 @@ public class SetFamily
             return set;
         }
 
+        public boolean checkForExistence(int n)
+        {
+            for(Set x: set)
+                if(x.checkForExistence(n))
+                    return true;
+
+            return false;
+        }
+
     }
+    ////////////////////////////////////////////////////////////
+
     ArrayList<SetInFamily> sets;
 
     public SetFamily()
@@ -38,7 +50,7 @@ public class SetFamily
     }
     public void createEmptySet()
     {
-        sets.add(new SetInFamily(sets.size()));
+        sets.add(new SetInFamily(sets.size() + 1));
     }
     public void addToLast(Set set)
     {
@@ -50,11 +62,20 @@ public class SetFamily
         String setString = new String();
         for (SetInFamily x: sets)
         {
-            for(Set y: x.getSet())
+            ArrayList<Set> tmp = x.getSet();
+
+            setString += "{ ";
+            for(Set y: tmp)
                 setString += y.toString() + ", ";
-            System.out.println(setString);
+            setString += " }, ";
+
         }
+        System.out.println(setString);
     }
 
+    public ArrayList<SetInFamily> getSets()
+    {
+        return sets;
+    }
 
 }

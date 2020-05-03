@@ -2,7 +2,7 @@ package cover;
 
 public class ElementSet extends Set
 {
-    int element;
+    private int element;
 
     public ElementSet(int element)
     {
@@ -11,7 +11,7 @@ public class ElementSet extends Set
 
     public int getElement(int index)
     {
-        if(index == 1)
+        if(index == 0)
             return element;
         return -1;
     }
@@ -20,4 +20,10 @@ public class ElementSet extends Set
     {
         return  "[" + element + "]";
     }
+
+    public boolean checkForExistence(int element)
+    {
+        return (this.element == element);
+    }
+
 }
