@@ -1,28 +1,40 @@
 package cover;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 
 public class Greedy extends Solution
 {
     public ArrayList<Integer> solve(FiniteSet target, SetFamily family)
     {
-        System.out.println("Doing naive solution");
+       //System.out.println("Doing greedy solution");
         boolean[] covered = new boolean[target.getLimit()];
+        Arrays.fill(covered, Boolean.FALSE);
+
         ArrayList<Integer> chosenSets = new ArrayList<Integer>();
         ArrayList<Integer> excludedSets = new ArrayList<Integer>();
 
         for(SetFamily.SetInFamily x: family.getSets())
         {
             boolean found = false;
-            for(int i = 0; i < covered.length && !found; i++)
-                if(x.checkForExistence(target.getElement(i)))
+            int i = 0;
+           // System.out.println("Limit is: " + target.getLimit());
+            while(!found && i < target.getLimit())
+            {
+                if (x.checkForExistence(target.getElement(i)))
                     found = true;
+                i++;
+            }
 
             if(!found)
                 excludedSets.add(x.getIndex());
 
         }
 
+       // String tmpstr = new String();
+       // for(Integer x: excludedSets)
+         ///   tmpstr += x + "";
+      //  System.out.println("Excluded are: " + tmpstr);
         boolean noProgress;
         do
         {
@@ -33,15 +45,20 @@ public class Greedy extends Solution
             for (SetFamily.SetInFamily x : family.getSets())
             {
                 int curr = 0;
-                if(!exclued(excludedSets, x))
+                if(!excluded(excludedSets, x))
                 {
-                    for (int i = 0; i < covered.length; i++) {
+                   // System.out.println("We are in set: " + x.getIndex());
+                    for (int i = 0; i < covered.length; i++)
+                    {
+                       // System.out.println("Checking the existence of " + target.getElement(i));
                         if (!covered[i])
-                            if (x.checkForExistence(target.getElement(i))) {
+                            if (x.checkForExistence(target.getElement(i)))
+                            {
+                              //  System.out.println("Found");
                                 curr++;
-                                covered[i] = true;
                             }
                     }
+                    //System.out.println("We found: " + curr);
                     if (curr > max) {
                         max = curr;
                         max_set = x.getIndex();
@@ -52,8 +69,9 @@ public class Greedy extends Solution
 
             }
 
-            System.out.println("Max set is: " + max_set);
+            //System.out.println("Max set is: " + max_set);
             chosenSets.add(max_set);
+            cover(covered, family.getSets().get(max_set - 1));
             excludedSets.add(max_set);
 
         }while(!fullyCovered(covered) && !noProgress);
@@ -77,12 +95,23 @@ public class Greedy extends Solution
         return true;
     }
 
-    private boolean exclued(ArrayList<Integer> excluded, SetFamily.SetInFamily set)
+    private boolean excluded(ArrayList<Integer> excluded, SetFamily.SetInFamily set)
     {
         for(Integer x: excluded)
             if(set.getIndex() == x)
                 return true;
         return false;
 
+    }
+
+    private void cover(boolean[] covered, SetFamily.SetInFamily set)
+    {
+        for (int i = 0; i < covered.length; i++)
+        {
+            if (!covered[i])
+                if (set.checkForExistence(i + 1))
+                    covered[i] = true;
+
+        }
     }
 }

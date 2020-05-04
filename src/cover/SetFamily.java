@@ -39,6 +39,23 @@ public class SetFamily
             return false;
         }
 
+        public ArrayList<Integer> commonElements(FiniteSet set)
+        {
+            ArrayList<Integer> commonElements = new ArrayList<Integer>();
+
+                for(int j = 1; j <= set.getLimit(); j++)
+                {
+                    if(checkForExistence(j))
+                        commonElements.add(j);
+                }
+
+            return commonElements;
+        }
+        public boolean empty()
+        {
+            return (set.size() == 0);
+        }
+
     }
     ////////////////////////////////////////////////////////////
 

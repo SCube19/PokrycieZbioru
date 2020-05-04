@@ -26,7 +26,7 @@ public class DataWrapper
             solution = new Greedy();
         else
         {
-            System.out.println("Preparing naive solution");
+            //System.out.println("Preparing naive solution");
             solution = new Naive();
         }
     }

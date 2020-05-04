@@ -4,9 +4,8 @@ import java.util.Scanner;
 
 public class Interactive {
 
-    public static boolean read(DataWrapper data)
+    public static boolean read(DataWrapper data, Scanner scanner)
     {
-        Scanner scanner = new Scanner(System.in);
         int input;
 
         while(scanner.hasNextInt())
@@ -15,16 +14,16 @@ public class Interactive {
 
             if(input > 0)
             {
-                System.out.println("I've read: " + input);
+                //System.out.println("I've read: " + input);
                 makeSet(data.getFamily(), scanner, input);
             }
 
             else if(input < 0)
             {
-                System.out.println("Going out by: " + input);
+                //System.out.println("Going out by: " + input);
                 data.makeTargetSet(1, 1, -input);
                 input = scanner.nextInt();
-                System.out.println("And: " + input);
+                //System.out.println("And: " + input);
 
                 data.createSolution(input);
 
@@ -33,11 +32,12 @@ public class Interactive {
 
             else if(input == 0)
             {
-                System.out.println("Empty set detected: " + input);
+               //System.out.println("Empty set detected: " + input);
                 data.getFamily().createEmptySet();
             }
 
         }
+        //System.out.println("has no next");
         return false;
     }
 
@@ -55,12 +55,12 @@ public class Interactive {
             }
             else
                 a = scanner.nextInt();
-            System.out.println("ElementSet for now or 0: " + a);
+            //System.out.println("ElementSet for now or 0: " + a);
             if(a == 0)
                 return;
 
             b = scanner.nextInt();
-            System.out.println("InfiniteSet for now or 0: " + b);
+            //System.out.println("InfiniteSet for now or 0: " + b);
             if(b >= 0)
                 r.addToLast(new ElementSet(a));
 
@@ -74,7 +74,7 @@ public class Interactive {
 
 
             c = scanner.nextInt();
-            System.out.println("FiniteSet or 0: " + c);
+           // System.out.println("FiniteSet or 0: " + c);
             if(c >= 0)
             {
                 r.addToLast(new InfiniteSet(a, -b));
@@ -95,12 +95,13 @@ public class Interactive {
 
     public static void printSets(ArrayList<Integer> setNumerals)
     {
-        System.out.println("printing solution");
+       // System.out.println("printing solution");
         String rString = new String();
 
         for(Integer x: setNumerals)
             rString += x + " ";
 
+        rString = rString.substring(0, rString.length() - 1);
         System.out.println(rString);
     }
 }

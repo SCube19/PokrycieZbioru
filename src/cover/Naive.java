@@ -6,7 +6,7 @@ public class Naive extends Solution
 {
     public ArrayList<Integer> solve(FiniteSet target, SetFamily family)
     {
-        System.out.println("Naive solution in progress");
+       // System.out.println("Naive solution in progress");
         boolean[] covered = new boolean[target.getLimit()];
         ArrayList<Integer> chosenSets = new ArrayList<Integer>();
 
