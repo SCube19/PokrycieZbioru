@@ -23,15 +23,6 @@ public class FiniteSet extends Set
         return -1;
 
     }
-    public ArrayList<Integer> makeArrayList()
-    {
-        ArrayList<Integer> temp = new ArrayList<Integer>();
-
-        for(int i = first; i <= limit; i+=step)
-            temp.add(i);
-
-        return temp;
-    }
 
     public String toString()
     {

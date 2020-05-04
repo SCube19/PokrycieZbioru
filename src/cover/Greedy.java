@@ -7,6 +7,12 @@ public class Greedy extends Solution
 {
     public ArrayList<Integer> solve(FiniteSet target, SetFamily family)
     {
+        if(family.getSets().size() == 0)
+        {
+            ArrayList<Integer> r = new ArrayList<>();
+            r.add(0);
+            return  r;
+        }
        //System.out.println("Doing greedy solution");
         boolean[] covered = new boolean[target.getLimit()];
         Arrays.fill(covered, Boolean.FALSE);

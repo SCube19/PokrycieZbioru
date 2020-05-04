@@ -1,10 +1,34 @@
 0
-1 2 5
-2 5
-2 5
-1 2 5 6 7
-2 5 6 7
-2 5 6 7
-1 2 5 6 7
-2 5 6 7
-5 6 8
+Precise solution
+Common for 1 are: 6 7 8 9 
+Common for 2 are: 
+Common for 3 are: 2 6 
+Common for 4 are: 
+Common for 5 are: 5 
+0
+Precise solution
+Common for 1 are: 6 7 8 
+Common for 2 are: 
+Common for 3 are: 2 6 
+Common for 4 are: 
+Common for 5 are: 5 
+0
+0
+Precise solution
+Common for 1 are: 6 
+Common for 2 are: 
+Common for 3 are: 2 6 
+Common for 4 are: 
+Common for 5 are: 5 
+Common for 6 are: 
+Common for 7 are: 
+Common for 8 are: 
+Common for 9 are: 4 5 6 
+Common for 10 are: 
+Common for 11 are: 2 3 4 5 6 
+Common for 12 are: 6 
+Common for 13 are: 2 5 
+Common for 14 are: 5 
+Common for 15 are: 1 2 5 
+Common for 16 are: 6 
+11 15

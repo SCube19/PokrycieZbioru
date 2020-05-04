@@ -23,7 +23,7 @@ public class Interactive {
                 //System.out.println("Going out by: " + input);
                 data.makeTargetSet(1, 1, -input);
                 input = scanner.nextInt();
-                //System.out.println("And: " + input);
+              //  System.out.println("And: " + input);
 
                 data.createSolution(input);
 
@@ -32,7 +32,7 @@ public class Interactive {
 
             else if(input == 0)
             {
-               //System.out.println("Empty set detected: " + input);
+              // System.out.println("Empty set detected: " + input);
                 data.getFamily().createEmptySet();
             }
 
@@ -76,10 +76,8 @@ public class Interactive {
             c = scanner.nextInt();
            // System.out.println("FiniteSet or 0: " + c);
             if(c >= 0)
-            {
                 r.addToLast(new InfiniteSet(a, -b));
-                return;
-            }
+
             if(c == 0)
                 return;
             if(c > 0)
@@ -88,8 +86,8 @@ public class Interactive {
                 continue;
             }
 
-
-            r.addToLast(new FiniteSet(a, -b, -c));
+            if(a <= -c)
+                r.addToLast(new FiniteSet(a, -b, -c));
         }
     }
 

@@ -1,5 +1,5 @@
 package cover;
-import javax.swing.*;
+
 import java.util.ArrayList;
 
 public class Precise extends Solution
@@ -7,41 +7,33 @@ public class Precise extends Solution
     public ArrayList<Integer> solve(FiniteSet target, SetFamily family)
     {
 
-       // System.out.println("Precise solution");
+        if(family.getSets().size() == 0)
+        {
+            ArrayList<Integer> r = new ArrayList<>();
+            r.add(0);
+            return  r;
+        }
+       System.out.println("Precise solution");
+
         ArrayList<ArrayList<Integer>> common = determineCommonElements(target, family);
+
         int[] chosenSets = new int[family.getSets().size()];
         boolean[] covered = new boolean[target.getLimit()];
+        int[] recursionTrack = new int[family.getSets().size()];
 
-        int minDepth = Integer.MAX_VALUE;
-        int minSetNum = -1;
+        int[] globalMin = new int[1];
+        globalMin[0] = Integer.MAX_VALUE;
 
         for(int i = 0; i < common.size(); i++)
         {
-            //System.out.println("Checking set " + (i+1) + " as start point");
-            int tmpDepth = recursiveSolve(common, i, 1, covered, chosenSets);
-
-           // System.out.println("Depth is " + tmpDepth);
-            if(tmpDepth != -1 && minDepth > tmpDepth)
-            {
-                minDepth = tmpDepth;
-                minSetNum = i;
-            }
-            String str = new String();
-            for(boolean x: covered)
-                str += x + " ";
-            //System.out.println("Coverage: " + str);
+            recursionTrack[0] = i + 1;
+            recursiveSolve(common, i, 0, covered, chosenSets, recursionTrack, globalMin);;
         }
 
-        chosenSets[0] = minSetNum + 1;
         ArrayList<Integer> rArray = new ArrayList<Integer>();
 
-        //String str = new String();
-       // for(int x: chosenSets)
-          //  str += x + " ";
-        //System.out.println("We chose: " + str);
-        //System.out.println("min sets are: " + minDepth);
-        if(minDepth != Integer.MAX_VALUE)
-            for(int i = 0; i < minDepth ; i++)
+        if(globalMin[0] != Integer.MAX_VALUE)
+            for(int i = 0; i < globalMin[0] + 1; i++)
                 rArray.add(chosenSets[i]);
         else
             rArray.add(0);
@@ -49,70 +41,48 @@ public class Precise extends Solution
         return rArray;
     }
 
-    private int recursiveSolve(ArrayList<ArrayList<Integer>> common, int setNum, int depth, boolean[] covered, int[] chosenSets)
+    private void recursiveSolve(ArrayList<ArrayList<Integer>> common, int setNum, int depth, boolean[] covered, int[] chosenSets, int[] recursionTrack, int[] globalMin)
     {
+        if(setNum >= common.size() || depth >= common.size())
+            return;
+
         if(common.get(setNum).size() == 0)
-            return -1;
+            recursiveSolve(common, setNum + 1, depth, covered, chosenSets, recursionTrack, globalMin);
 
-       /// System.out.println("setNum is: :" + (setNum+1));
-        //System.out.println("depth is: :" + depth);
+        recursionTrack[depth] = setNum + 1;
 
-        //String str = new String();
-        //for(boolean x: covered)
-        //    str += x + " ";
-       // System.out.println("Coverage before: " + str);
         ArrayList<Integer> alreadyCovered = coverUncoveredCommon(covered, common.get(setNum));
-
-        //str = new String();
-        ///for(boolean x: covered)
-        //    str += x + " ";
-       // System.out.println("Coverage after: " + str);
 
         if(fullyCovered(covered))
         {
-           // System.out.println("Full cover");
+            if(depth < globalMin[0])
+            {
+                globalMin[0] = depth;
+                copyArray(chosenSets, recursionTrack);
+            }
+
             uncoverRecent(covered, common.get(setNum), alreadyCovered);
-           // str = new String();
-            //for(boolean x: covered)
-            //   str += x + " ";
-            //System.out.println("Coverage reversal: " + str);
-            return depth;
+            return;
         }
         else if(setNum == common.size() - 1)
         {
-           // System.out.println("Cant cover");
             uncoverRecent(covered, common.get(setNum), alreadyCovered);
-           // str = new String();
-          //  for(boolean x: covered)
-           //     str += x + " ";
-            //System.out.println("Coverage reversal: " + str);
-           // uncoverRecent(covered, common.get(setNum), alreadyCovered);
-            return -1;
+            return;
         }
-
-        int minDepth = Integer.MAX_VALUE;
-        int minSetNum = -1;
 
         for(int i = setNum + 1; i < common.size(); i++)
         {
-            int tmpDepth = recursiveSolve(common, i, depth + 1, covered, chosenSets);
-
-            if(tmpDepth != -1 && tmpDepth < minDepth)
-            {
-                minDepth = tmpDepth;
-                minSetNum = i;
-            }
+             recursiveSolve(common, i, depth + 1, covered, chosenSets, recursionTrack, globalMin);
         }
 
         uncoverRecent(covered, common.get(setNum), alreadyCovered);
-
-        if(minSetNum != -1)
-            chosenSets[depth] = minSetNum + 1;
-
-        if(minDepth != Integer.MAX_VALUE)
-            return minDepth;
-        return -1;
+        return;
     }
+
+
+
+
+
 
     private ArrayList<ArrayList<Integer>> determineCommonElements(FiniteSet target, SetFamily family)
     {
@@ -122,10 +92,6 @@ public class Precise extends Solution
         {
            commonElements.add(family.getSets().get(i).commonElements(target));
 
-          //  String tmp = new String();
-           // for(Integer x: commonElements.get(commonElements.size()-1))
-           //     tmp += x + " ";
-           // System.out.println("Common for " + (i+1) + " are: " + tmp);
         }
 
         return commonElements;
@@ -181,4 +147,11 @@ public class Precise extends Solution
         return true;
     }
 
+    private void copyArray(int[] arr1, int[] arr2)
+    {
+        for(int i = 0; i < arr1.length; i++)
+        {
+            arr1[i] = arr2[i];
+        }
+    }
 }
