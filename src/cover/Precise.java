@@ -13,22 +13,27 @@ public class Precise extends Solution
         boolean[] covered = new boolean[target.getLimit()]; //oznaczenie ktore zbiory sa pokryte
         int[] recursionTrack = new int[family.getSets().size()]; //tablica trzymajaca aktualna sciezke na drzewie rekurencji
 
+        Naive upperBound = new Naive();
+        ArrayList<Integer> rArray = upperBound.solve(target, family); //naiwna heurystyka zadaje nam gorne ograniczenie dla precyzyjnego algorytmu
+
         int[] globalMin = new int[1]; //aktualne minimum, wysylane referencja
-        globalMin[0] = Integer.MAX_VALUE;
+        globalMin[0] = rArray.size() - 1;
 
-        for(int i = 0; i < common.size(); i++)
+        if(globalMin[0] != -1)
         {
-            recursionTrack[0] = i + 1;
-            recursiveSolve(common, i, 0, covered, chosenSets, recursionTrack, globalMin);
+            for (int i = 0; i < common.size(); i++)
+            {
+                recursionTrack[0] = i + 1;
+                recursiveSolve(common, i, 0, covered, chosenSets, recursionTrack, globalMin);
+            }
+
+            if(globalMin[0] + 1 < rArray.size()) //tablica ulegla zmianie
+            {
+                rArray.clear();
+                for (int i = 0; i < globalMin[0] + 1; i++) //konwerjsa tablicy na odpowiednia arrayliste
+                    rArray.add(chosenSets[i]);
+            }
         }
-
-        ArrayList<Integer> rArray = new ArrayList<Integer>();
-
-        if(globalMin[0] != Integer.MAX_VALUE)
-            for(int i = 0; i < globalMin[0] + 1; i++) //konwerjsa tablicy na odpowiednia arrayliste
-                rArray.add(chosenSets[i]);
-        else
-            rArray.add(0);
 
         return rArray;
     }
@@ -43,26 +48,29 @@ public class Precise extends Solution
 
         recursionTrack[depth] = setNum + 1; //oznaczamy krok na sciezce
 
-        ArrayList<Integer> alreadyCovered = coverUncoveredCommon(covered, common.get(setNum)); //zaznaczamy odpowiednie elementy zbioru docelowego | zapamietujemy ktore byly juz zaznaczone
+        ArrayList<Integer> toUncover = coverUncoveredCommon(covered, common.get(setNum)); //zaznaczamy odpowiednie elementy zbioru docelowego | zapamietujemy ktore zaznaczylismy
+
+        if(toUncover.size() == 0) //taka galaz nic nam nie daje
+            return;
 
         if(fullyCovered(covered))
         {
             globalMin[0] = depth;
             System.arraycopy(recursionTrack, 0, chosenSets, 0, depth + 1);
 
-            uncoverRecent(covered, common.get(setNum), alreadyCovered); //cofamy  pokrycie wprowadzone na tej glebokosci
+            uncoverRecent(covered, toUncover); //cofamy pokrycie wprowadzone na tej glebokosci
             return;
         }
         else if(setNum == common.size() - 1) //nie udalo sie pokryc zbioru ta kombinacja
         {
-            uncoverRecent(covered, common.get(setNum), alreadyCovered); //cofamy
+            uncoverRecent(covered, toUncover); //cofamy
             return;
         }
 
         for(int i = setNum + 1; i < common.size(); i++)
              recursiveSolve(common, i, depth + 1, covered, chosenSets, recursionTrack, globalMin); //rekurencja pozwalajaca wybrac kazda kombinacje zbiorow
 
-        uncoverRecent(covered, common.get(setNum), alreadyCovered); //cofamy pokrycie
+        uncoverRecent(covered, toUncover); //cofamy pokrycie
         return;
     }
 
@@ -78,44 +86,22 @@ public class Precise extends Solution
 
     private  ArrayList<Integer> coverUncoveredCommon(boolean[] covered, ArrayList<Integer> common)
     {
-        ArrayList<Integer> alreadyCovered = new ArrayList<Integer>();
+        ArrayList<Integer> toUncover = new ArrayList<Integer>();
 
         for(Integer x: common)
-            if(!covered[x - 1]) //pokrywamy
+            if(!covered[x - 1])
+            {
                 covered[x - 1] = true;
-            else //dodajemy do listy juz wczesniej pokrytych
-                alreadyCovered.add(x);
+                toUncover.add(x);
+            }
 
-        return alreadyCovered;
+        return toUncover;
     }
 
-    private void uncoverRecent(boolean[] covered, ArrayList<Integer> common, ArrayList<Integer> wereCovered)
+    private void uncoverRecent(boolean[] covered, ArrayList<Integer> toUncover)
     {
-        int i = 0, j = 0;
-
-        while(i < common.size())
-        {
-            if(j < wereCovered.size())
-            {
-                if(wereCovered.get(j) == common.get(i)) //byl pokryty wczesniej
-                {
-                    i++;
-                    j++;
-                }
-                else
-                {
-                    covered[common.get(i) - 1] = false;
-                    i++;
-                }
-
-            }
-            else //skonczyly sie elementy wereCovered
-            {
-                covered[common.get(i) - 1] = false;
-                i++;
-            }
-
-        }
+       for(Integer x: toUncover)
+           covered[x - 1] = false;
     }
 
     private boolean fullyCovered(boolean[] covered)
