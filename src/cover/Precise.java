@@ -13,7 +13,6 @@ public class Precise extends Solution
             r.add(0);
             return  r;
         }
-       System.out.println("Precise solution");
 
         ArrayList<ArrayList<Integer>> common = determineCommonElements(target, family);
 
@@ -27,7 +26,7 @@ public class Precise extends Solution
         for(int i = 0; i < common.size(); i++)
         {
             recursionTrack[0] = i + 1;
-            recursiveSolve(common, i, 0, covered, chosenSets, recursionTrack, globalMin);;
+            recursiveSolve(common, i, 0, covered, chosenSets, recursionTrack, globalMin);
         }
 
         ArrayList<Integer> rArray = new ArrayList<Integer>();
@@ -43,7 +42,7 @@ public class Precise extends Solution
 
     private void recursiveSolve(ArrayList<ArrayList<Integer>> common, int setNum, int depth, boolean[] covered, int[] chosenSets, int[] recursionTrack, int[] globalMin)
     {
-        if(setNum >= common.size() || depth >= common.size())
+        if(setNum >= common.size() || depth >= common.size() || depth >= globalMin[0])
             return;
 
         if(common.get(setNum).size() == 0)
@@ -55,11 +54,8 @@ public class Precise extends Solution
 
         if(fullyCovered(covered))
         {
-            if(depth < globalMin[0])
-            {
-                globalMin[0] = depth;
-                copyArray(chosenSets, recursionTrack);
-            }
+            globalMin[0] = depth;
+            copyArray(chosenSets, recursionTrack);
 
             uncoverRecent(covered, common.get(setNum), alreadyCovered);
             return;
