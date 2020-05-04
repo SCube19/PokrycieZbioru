@@ -2,6 +2,7 @@ package cover;
 
 public class DataWrapper
 {
+    //klasa przechowujaca aktualne dane uzywane w obliczeniu rozwiazania
     private SetFamily family;
     private FiniteSet targetSet;
     private Solution solution;
@@ -25,10 +26,8 @@ public class DataWrapper
         else if(choice == 2)
             solution = new Greedy();
         else
-        {
-            //System.out.println("Preparing naive solution");
             solution = new Naive();
-        }
+
     }
 
     public SetFamily getFamily()

@@ -7,20 +7,13 @@ public class Precise extends Solution
     public ArrayList<Integer> solve(FiniteSet target, SetFamily family)
     {
 
-        if(family.getSets().size() == 0)
-        {
-            ArrayList<Integer> r = new ArrayList<>();
-            r.add(0);
-            return  r;
-        }
+        ArrayList<ArrayList<Integer>> common = determineCommonElements(target, family); //algorytm dziala na zbiorach bedacych przecieciami target i zbiorow z family
 
-        ArrayList<ArrayList<Integer>> common = determineCommonElements(target, family);
+        int[] chosenSets = new int[family.getSets().size()]; //tablica wyjsciowa
+        boolean[] covered = new boolean[target.getLimit()]; //oznaczenie ktore zbiory sa pokryte
+        int[] recursionTrack = new int[family.getSets().size()]; //tablica trzymajaca aktualna sciezke na drzewie rekurencji
 
-        int[] chosenSets = new int[family.getSets().size()];
-        boolean[] covered = new boolean[target.getLimit()];
-        int[] recursionTrack = new int[family.getSets().size()];
-
-        int[] globalMin = new int[1];
+        int[] globalMin = new int[1]; //aktualne minimum, wysylane referencja
         globalMin[0] = Integer.MAX_VALUE;
 
         for(int i = 0; i < common.size(); i++)
@@ -32,7 +25,7 @@ public class Precise extends Solution
         ArrayList<Integer> rArray = new ArrayList<Integer>();
 
         if(globalMin[0] != Integer.MAX_VALUE)
-            for(int i = 0; i < globalMin[0] + 1; i++)
+            for(int i = 0; i < globalMin[0] + 1; i++) //konwerjsa tablicy na odpowiednia arrayliste
                 rArray.add(chosenSets[i]);
         else
             rArray.add(0);
@@ -42,53 +35,43 @@ public class Precise extends Solution
 
     private void recursiveSolve(ArrayList<ArrayList<Integer>> common, int setNum, int depth, boolean[] covered, int[] chosenSets, int[] recursionTrack, int[] globalMin)
     {
-        if(setNum >= common.size() || depth >= common.size() || depth >= globalMin[0])
+        if(setNum >= common.size() || depth >= common.size() || depth >= globalMin[0]) //outOfBounds | nie sprawdzamy kombinacji/galezi dajacej zawsze gorszy wynik od minimum
             return;
 
-        if(common.get(setNum).size() == 0)
+        if(common.get(setNum).size() == 0)// omijamy zbiory puste
             recursiveSolve(common, setNum + 1, depth, covered, chosenSets, recursionTrack, globalMin);
 
-        recursionTrack[depth] = setNum + 1;
+        recursionTrack[depth] = setNum + 1; //oznaczamy krok na sciezce
 
-        ArrayList<Integer> alreadyCovered = coverUncoveredCommon(covered, common.get(setNum));
+        ArrayList<Integer> alreadyCovered = coverUncoveredCommon(covered, common.get(setNum)); //zaznaczamy odpowiednie elementy zbioru docelowego | zapamietujemy ktore byly juz zaznaczone
 
         if(fullyCovered(covered))
         {
             globalMin[0] = depth;
-            copyArray(chosenSets, recursionTrack);
+            System.arraycopy(recursionTrack, 0, chosenSets, 0, depth + 1);
 
-            uncoverRecent(covered, common.get(setNum), alreadyCovered);
+            uncoverRecent(covered, common.get(setNum), alreadyCovered); //cofamy  pokrycie wprowadzone na tej glebokosci
             return;
         }
-        else if(setNum == common.size() - 1)
+        else if(setNum == common.size() - 1) //nie udalo sie pokryc zbioru ta kombinacja
         {
-            uncoverRecent(covered, common.get(setNum), alreadyCovered);
+            uncoverRecent(covered, common.get(setNum), alreadyCovered); //cofamy
             return;
         }
 
         for(int i = setNum + 1; i < common.size(); i++)
-        {
-             recursiveSolve(common, i, depth + 1, covered, chosenSets, recursionTrack, globalMin);
-        }
+             recursiveSolve(common, i, depth + 1, covered, chosenSets, recursionTrack, globalMin); //rekurencja pozwalajaca wybrac kazda kombinacje zbiorow
 
-        uncoverRecent(covered, common.get(setNum), alreadyCovered);
+        uncoverRecent(covered, common.get(setNum), alreadyCovered); //cofamy pokrycie
         return;
     }
-
-
-
-
-
 
     private ArrayList<ArrayList<Integer>> determineCommonElements(FiniteSet target, SetFamily family)
     {
         ArrayList<ArrayList<Integer>> commonElements = new ArrayList<ArrayList<Integer>>();
 
         for(int i = 0; i < family.getSets().size(); i++)
-        {
            commonElements.add(family.getSets().get(i).commonElements(target));
-
-        }
 
         return commonElements;
     }
@@ -98,9 +81,9 @@ public class Precise extends Solution
         ArrayList<Integer> alreadyCovered = new ArrayList<Integer>();
 
         for(Integer x: common)
-            if(!covered[x - 1])
+            if(!covered[x - 1]) //pokrywamy
                 covered[x - 1] = true;
-            else
+            else //dodajemy do listy juz wczesniej pokrytych
                 alreadyCovered.add(x);
 
         return alreadyCovered;
@@ -114,7 +97,7 @@ public class Precise extends Solution
         {
             if(j < wereCovered.size())
             {
-                if(wereCovered.get(j) == common.get(i))
+                if(wereCovered.get(j) == common.get(i)) //byl pokryty wczesniej
                 {
                     i++;
                     j++;
@@ -126,7 +109,7 @@ public class Precise extends Solution
                 }
 
             }
-            else
+            else //skonczyly sie elementy wereCovered
             {
                 covered[common.get(i) - 1] = false;
                 i++;
@@ -143,11 +126,4 @@ public class Precise extends Solution
         return true;
     }
 
-    private void copyArray(int[] arr1, int[] arr2)
-    {
-        for(int i = 0; i < arr1.length; i++)
-        {
-            arr1[i] = arr2[i];
-        }
-    }
 }

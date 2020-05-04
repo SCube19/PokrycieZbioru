@@ -1,5 +1,4 @@
 package cover;
-import java.util.ArrayList;
 
 public class FiniteSet extends Set
 {
@@ -13,6 +12,7 @@ public class FiniteSet extends Set
         this.step = step;
         this.limit = limit;
     }
+
     public int getElement(int index)
     {
         int rVal = first + index * step;
@@ -21,23 +21,11 @@ public class FiniteSet extends Set
             return rVal;
 
         return -1;
-
-    }
-
-    public String toString()
-    {
-        String rString = "[ ";
-        for(int i = 0; i < 3; i++)
-            rString += (first + step*i) + ", ";
-
-        rString += "..., " + limit + " ]";
-
-        return rString;
     }
 
     public boolean checkForExistence(int element)
     {
-        return (element >= first && element <= limit &&(element - first)%step == 0);
+        return (element >= first && element <= limit && (element - first)%step == 0);
     }
 
     public int getLimit()

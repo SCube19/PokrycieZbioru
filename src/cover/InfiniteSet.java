@@ -11,21 +11,6 @@ public class InfiniteSet extends Set
         this.step = step;
     }
 
-    public int getElement(int index)
-    {
-        return first + index * step;
-    }
-
-    public String toString()
-    {
-        String rString = "[ ";
-        for(int i = 0; i < 3; i++)
-            rString += (first + step*i) + ", ";
-        rString += "...]";
-
-        return rString;
-    }
-
     public boolean checkForExistence(int element)
     {
         return (element >= first && (element - first)%step == 0);

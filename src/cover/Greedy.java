@@ -9,22 +9,22 @@ public class Greedy extends Solution
     {
         if(family.getSets().size() == 0)
         {
-            ArrayList<Integer> r = new ArrayList<>();
-            r.add(0);
-            return  r;
+            ArrayList<Integer> tmp = new ArrayList<>();
+            tmp.add(0);
+            return tmp;
         }
-       //System.out.println("Doing greedy solution");
+
         boolean[] covered = new boolean[target.getLimit()];
         Arrays.fill(covered, Boolean.FALSE);
 
         ArrayList<Integer> chosenSets = new ArrayList<Integer>();
         ArrayList<Integer> excludedSets = new ArrayList<Integer>();
 
-        for(SetFamily.SetInFamily x: family.getSets())
+        for(SetFamily.SetInFamily x: family.getSets()) //nie sprawdzamy zbiorow ktore nie posiadaja elementow z target
         {
             boolean found = false;
             int i = 0;
-           // System.out.println("Limit is: " + target.getLimit());
+
             while(!found && i < target.getLimit())
             {
                 if (x.checkForExistence(target.getElement(i)))
@@ -34,13 +34,9 @@ public class Greedy extends Solution
 
             if(!found)
                 excludedSets.add(x.getIndex());
-
         }
 
-       // String tmpstr = new String();
-       // for(Integer x: excludedSets)
-         ///   tmpstr += x + "";
-      //  System.out.println("Excluded are: " + tmpstr);
+
         boolean noProgress;
         do
         {
@@ -51,38 +47,31 @@ public class Greedy extends Solution
             for (SetFamily.SetInFamily x : family.getSets())
             {
                 int curr = 0;
+
                 if(!excluded(excludedSets, x))
                 {
-                   // System.out.println("We are in set: " + x.getIndex());
                     for (int i = 0; i < covered.length; i++)
+                        if (!covered[i] && x.checkForExistence(target.getElement(i)))
+                            curr++;
+
+                    if (curr > max)
                     {
-                       // System.out.println("Checking the existence of " + target.getElement(i));
-                        if (!covered[i])
-                            if (x.checkForExistence(target.getElement(i)))
-                            {
-                              //  System.out.println("Found");
-                                curr++;
-                            }
-                    }
-                    //System.out.println("We found: " + curr);
-                    if (curr > max) {
                         max = curr;
                         max_set = x.getIndex();
                     }
                 }
-                if(curr != 0)
+                if(curr != 0) //udalo nam sie znalezc zbior w ktorym sa jeszcze niepokryte elementy
                     noProgress = false;
 
             }
 
-            //System.out.println("Max set is: " + max_set);
-            chosenSets.add(max_set);
-            cover(covered, family.getSets().get(max_set - 1));
-            excludedSets.add(max_set);
+            chosenSets.add(max_set); //wybieramy najwiekszy zbior
+            cover(covered, family.getSets().get(max_set - 1)); //pokrywamy elementy tym zbiorem
+            excludedSets.add(max_set); //dodajemy ten zbior do wylaczanych
 
         }while(!fullyCovered(covered) && !noProgress);
 
-        if(noProgress)
+        if(noProgress) //skonczylismy petle przez brak mozliwosci pokrycia zbioru
         {
             chosenSets.clear();
             chosenSets.add(0);

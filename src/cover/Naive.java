@@ -1,20 +1,13 @@
 package cover;
-import java.awt.*;
 import java.util.ArrayList;
 
 public class Naive extends Solution
 {
     public ArrayList<Integer> solve(FiniteSet target, SetFamily family)
     {
-        if(family.getSets().size() == 0)
-        {
-            ArrayList<Integer> r = new ArrayList<>();
-            r.add(0);
-            return  r;
-        }
-       //System.out.println("Naive solution in progress");
-        boolean[] covered = new boolean[target.getLimit()];
-        ArrayList<Integer> chosenSets = new ArrayList<Integer>();
+
+        boolean[] covered = new boolean[target.getLimit()]; //oznaczamy elementy juz pokryte
+        ArrayList<Integer> chosenSets = new ArrayList<Integer>(); //lista zwracana
 
         for(SetFamily.SetInFamily x: family.getSets())
         {
@@ -22,23 +15,23 @@ public class Naive extends Solution
 
             for(int i = 0; i < covered.length; i++)
             {
-                if(!covered[i])
-                    if(x.checkForExistence(target.getElement(i)))
+                if(!covered[i]) //uznajemy pokryte elementy za nieistniejace
+                    if(x.checkForExistence(target.getElement(i))) //pokrywamy niepokryte jeszcze elementy
                     {
                         covered[i] = true;
                         cover = true;
                     }
-
             }
-            if(cover)
-                chosenSets.add(x.getIndex());
 
+            if(cover) //uzylismy przynajmniej jednego elementu ze zbioru x
+                chosenSets.add(x.getIndex());
         }
 
         for(boolean x: covered)
-            if(!x)
+            if(!x) // nie udalo sie pokryc zbioru cala rodzina
             {   chosenSets.clear();
                 chosenSets.add(0);
+                break;
             }
 
         return chosenSets;
