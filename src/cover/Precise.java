@@ -13,28 +13,25 @@ public class Precise extends Solution
         boolean[] covered = new boolean[target.getLimit()]; //oznaczenie ktore zbiory sa pokryte
         int[] recursionTrack = new int[family.getSets().size()]; //tablica trzymajaca aktualna sciezke na drzewie rekurencji
 
-        Naive upperBound = new Naive();
-        ArrayList<Integer> rArray = upperBound.solve(target, family); //naiwna heurystyka zadaje nam gorne ograniczenie dla precyzyjnego algorytmu
+        ArrayList<Integer> rArray = new ArrayList<Integer>(); 
 
         int[] globalMin = new int[1]; //aktualne minimum, wysylane referencja
-        globalMin[0] = rArray.size() - 1;
+        globalMin[0] = Integer.MAX_VALUE;
 
-        if(globalMin[0] != -1)
-        {
             for (int i = 0; i < common.size(); i++)
             {
                 recursionTrack[0] = i + 1;
                 recursiveSolve(common, i, 0, covered, chosenSets, recursionTrack, globalMin);
             }
 
-            if(globalMin[0] + 1 < rArray.size()) //tablica ulegla zmianie
-            {
-                rArray.clear();
+            if(globalMin[0]!=Integer.MAX_VALUE) //znalezlismy jakies kombinacje        
                 for (int i = 0; i < globalMin[0] + 1; i++) //konwerjsa tablicy na odpowiednia arrayliste
                     rArray.add(chosenSets[i]);
-            }
-        }
-
+            
+        	else
+				rArray.add(0);
+			
+			
         return rArray;
     }
 
